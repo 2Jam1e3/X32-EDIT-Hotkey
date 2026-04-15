@@ -147,29 +147,3 @@ Example:
   * Your PC and mixer are on the same network
   * Firewall allows outbound UDP on port `10023`
 * X32 Edit software does **not** support custom mute hotkeys natively — this is a workaround
-
----
-
-## 💡 Alternatives
-
-* Bitfocus Companion (more advanced control)
-* MIDI controllers with OSC bridges
-
----
-
-## 📜 License
-
-MIT License (or specify your preferred license)
-
----
-
-## 🙌 Contributing
-
-Feel free to:
-
-* Add more hotkey presets
-* Improve OSC handling
-* Extend to other mixer functions (faders, sends, scenes)
-
-```
-```
