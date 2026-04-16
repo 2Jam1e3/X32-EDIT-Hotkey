@@ -1,149 +1,45 @@
-````markdown
-# 🎛️ X32 Mute Hotkeys (AutoHotkey + PowerShell)
+# X32/M32 Mute Hotkeys via OSC
 
-Control your **Behringer X32 / Midas M32** mixer channel mute states using global keyboard shortcuts.
+This project provides global keyboard hotkeys for toggling mute states (ON/OFF) on Behringer X32 or Midas M32 mixing consoles. Since the **X32 EDIT** application does not support custom hotkeys, this solution uses **AutoHotkey (v2)** to trigger a **PowerShell** script that communicates with the mixer over UDP (OSC protocol).
 
-This project provides a simple way to toggle channel **mute/unmute (ON/OFF)** via OSC using:
-- **AutoHotkey v2** (for hotkeys)
-- **PowerShell** (for OSC communication over UDP)
+## Prerequisites
 
----
+* [cite_start]**AutoHotkey v2**: Download and install from [autohotkey.com](https://www.autohotkey.com/)[cite: 2].
+* **PowerShell 5.1+**: Standard on Windows 10/11.
+* **Network Access**: Your PC must be on the same network as the X32/M32 console.
 
-## ✨ Features
+## Setup
 
-- Global hotkeys (work even when other apps are focused)
-- Toggle one or multiple channels instantly
-- Uses OSC over UDP (port `10023`)
-- Lightweight, no external dependencies beyond PowerShell + AutoHotkey
-- Easy to customize channel mappings
+1.  Place `X32MuteHotkeys.ahk` and `X32ToggleChannel.ps1` in the same folder.
+2.  Open `X32MuteHotkeys.ahk` in a text editor and update the `X32_IP` variable to match your console's IP address (default is set to `192.168.86.115`).
+3.  Double-click `X32MuteHotkeys.ahk` to run the script.
+4.  [cite_start](Optional) Press **F11** to confirm the script is active[cite: 13].
 
----
+## Default Hotkeys
 
-## 📁 Files
+[cite_start]The script uses **Alt + Top Row Numbers** as global hotkeys[cite: 6]. Note that some keys are remapped to specific channels in the provided code:
 
-### `X32MuteHotkeys.ahk`
-- Defines global keyboard shortcuts
-- Calls the PowerShell script with selected channel(s)
-- Logs output to a temp file
+| Hotkey | Target Channel |
+| :--- | :--- |
+| `Alt + 1` | [cite_start]Channel 1 [cite: 6] |
+| `Alt + 2` | [cite_start]Channel 2 [cite: 7] |
+| `Alt + 3` | [cite_start]**Channel 11** [cite: 8] |
+| `Alt + 4` | [cite_start]**Channel 13** [cite: 9] |
+| `Alt + 5` | [cite_start]Channel 5 [cite: 10] |
+| `Alt + 6` | [cite_start]Channel 6 [cite: 10] |
+| `Alt + 7` | [cite_start]Channel 7 [cite: 11] |
+| `Alt + 8` | [cite_start]Channel 8 [cite: 11] |
+| `Alt + 9` | [cite_start]Channel 9 [cite: 12] |
+| `Alt + 0` | [cite_start]Channel 10 [cite: 12] |
 
-### `X32ToggleChannel.ps1`
-- Sends OSC messages to the mixer
-- Toggles `/ch/XX/mix/on` state:
-  - `0` = OFF (muted)
-  - `1` = ON (unmuted)
-- Supports multiple channels at once
+## How it Works
 
----
+1.  [cite_start]**AutoHotkey** captures the global keypress[cite: 3].
+2.  [cite_start]It executes a hidden PowerShell command using `RunToggle()`[cite: 5].
+3.  [cite_start]**PowerShell** sends an OSC query to the mixer at port `10023` to check the current mute state[cite: 3].
+4.  It calculates the opposite state (Toggle) and sends the command back to the mixer.
 
-## ⚙️ Requirements
+## Troubleshooting
 
-- Windows
-- **AutoHotkey v2.0+**
-- **PowerShell 5.1+**
-- X32/M32 mixer on the same network
-
----
-
-## 🚀 Setup
-
-1. **Download / Clone the repository**
-
-2. **Edit the mixer IP**
-
-   Open `X32MuteHotkeys.ahk` and set:
-   ```ahk
-   global X32_IP := "192.168.86.115"
-````
-
-3. **Install AutoHotkey v2**
-
-   [https://www.autohotkey.com/](https://www.autohotkey.com/)
-
-4. **Run the script**
-
-   Double-click:
-
-   ```
-   X32MuteHotkeys.ahk
-   ```
-
----
-
-## 🎹 Default Hotkeys
-
-| Hotkey  | Channel |
-| ------- | ------- |
-| Alt + 1 | 1       |
-| Alt + 2 | 2       |
-| Alt + 3 | 11      |
-| Alt + 4 | 13      |
-| Alt + 5 | 5       |
-| Alt + 6 | 6       |
-| Alt + 7 | 7       |
-| Alt + 8 | 8       |
-| Alt + 9 | 9       |
-| Alt + 0 | 10      |
-
-👉 You can edit these mappings inside `X32MuteHotkeys.ahk`.
-
----
-
-## 🧪 Test / Health Check
-
-Press:
-
-```
-F11
-```
-
-You should see:
-
-```
-X32 hotkey script is running.
-```
-
----
-
-## 🛠️ Customization
-
-### Change or Add Hotkeys
-
-Example:
-
-```ahk
-!q::RunToggle(3)     ; Alt + Q → Channel 3
-```
-
-### Toggle Multiple Channels
-
-```ahk
-!w::RunToggle(13,14) ; Alt + W → Channels 13 & 14
-```
-
----
-
-## 📡 How It Works
-
-1. AutoHotkey detects a keypress
-2. It runs:
-
-   ```
-   X32ToggleChannel.ps1
-   ```
-3. PowerShell sends an OSC message to:
-
-   ```
-   /ch/{channel}/mix/on
-   ```
-4. The mixer toggles the channel state
-
----
-
-## ⚠️ Notes
-
-* `Alt + number` may conflict with other applications
-* Make sure:
-
-  * Your PC and mixer are on the same network
-  * Firewall allows outbound UDP on port `10023`
-* X32 Edit software does **not** support custom mute hotkeys natively — this is a workaround
+Logs are generated in your temporary folder to help diagnose issues:
+[cite_start]`%TEMP%\x32-hotkeys.log` [cite: 5]
